@@ -159,6 +159,18 @@ o desde el otro contenedor:
 ping donpepito
 ```
 
+También podrías hacer un `ping` directamente a la dirección IP del contenedor:
+
+```bash
+ping 172.18.0.2
+```
+
+O desde el otro contenedor:
+
+```bash
+ping 172.18.0.3
+```
+
 Para entender mejor todos estos conceptos, te recomiendo que veas el vídeo de mi canal de Youtube [5. Cómo funciona el networking en Docker](https://youtu.be/n5Zw00mYRH4).
 
 
