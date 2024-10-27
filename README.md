@@ -31,6 +31,30 @@ En el vídeo te muestro otras formas de averiguarlo de una forma gráfica y más
 También puedes usar un parámetro como parte de la instrucción `docker run` para que Docker asigne un puerto aleatorio de tu host al puerto del contenedor:
 
 ```bash
+docker run -d --publish-all nginx
+```
+
+o bien, si quieres utilizar un comando más corto:
+
+
+```bash
+docker run -d -P nginx
+```
+
+Al igual que cualquier servidor, un contenedor puede estar a la escucha en varios puertos, solo tendrías que hacer que tu código esté a la escucha en varios puertos y en el Dockerfile puedes especificar los puertos que quieres exponer.
+
+```Dockerfile
+FROM nginx
+
+EXPOSE 80/tcp
+EXPOSE 80/udp
+
+EXPOSE 8080
+EXPOSE 8081
+EXPOSE 8082
+```
+
+Y de la misma forma que lo hicimos antes, podríamos usar el comando `docker run -P` para que Docker asigne puertos aleatorios de nuestro host a los puertos del contenedor.
 
 
 ## Network bridge
