@@ -54,31 +54,115 @@ EXPOSE 8081
 EXPOSE 8082
 ```
 
+Este lo tienes en el archivo `Dockerfile.port-mapping` de este repositorio.
+
 Y de la misma forma que lo hicimos antes, podríamos usar el comando `docker run -P` para que Docker asigne puertos aleatorios de nuestro host a los puertos del contenedor.
 
 
-## Network bridge
+## Cómo podemos hacer que los contenedores se comuniquen entre sí
 
+Todos los contenedores que hemos creado hasta ahora siempre han pertenecido a una red, sin tu saberlo. Docker crea una red por defecto para que los contenedores puedan comunicarse entre sí. 
 
-
-```bash
-```
-
-
-## Network host
+Si echamos un vistazo a las redes que tenemos en nuestro sistema, podemos ver que Docker ha creado una red llamada `bridge`:
 
 ```bash
+docker network ls
 ```
 
-## Network none
+Esta es la red por defecto que Docker crea para que los contenedores puedan comunicarse entre sí.
+
+### Network bridge
+
+Si queremos ver el detalle de la misma, podemos hacerlo con el siguiente comando:
 
 ```bash
+docker network inspect bridge
 ```
 
-## Crea tus propias redes
+El resultado tiene un apartado llamado `Containers` que nos muestra los contenedores que pertenecen a esta red. Cada uno de ellos tiene su propia dirección IP. Te puedes dar cuenta además de que los rangos de esta red no son el mismo que el de tu host, esto es porque Docker crea una red virtual para que los contenedores puedan comunicarse entre sí. Si quieres que los contenedores se comuniquen entre sí, puedes hacerlo a través de la dirección IP de cada contenedor.
+
+Puedes utilizar el contenedor `busybox` para hacer ping a otro contenedor. 
 
 ```bash
+docker run -it --rm busybox
 ```
+
+Una vez dentro del contenedor, puedes hacer una llamada a otro contenedor. Por ejemplo, si el otro contenedor es un servidor web y está a la escucha en el puerto 80, puedes hacer un `wget` a la dirección IP del contenedor:
+
+```bash
+wget -qO-  http://172.17.0.2
+```
+
+### Network host
+
+Esta red nos permite que el contenedor comparta la red del host. Esto significa que el contenedor no tendrá su propia dirección IP, sino que compartirá la misma que el host. 
+
+```bash
+docker run -d --network host nginx
+```
+
+En este caso el contenedor de nginx no tiene su propia dirección IP, sino que comparte la misma que el host. Por lo que si abro un navegador y pongo `http://localhost`, veré el contenido del contenedor de nginx.
+
+En el pasado esto no era posible probarlo con Docker Desktop pero con las versiones más recientes del mismo ya es posible como puedes ver en el vídeo.
+
+### Network none
+
+Este tipo de red no tiene acceso a la red del host ni a la red de otros contenedores. 
+
+```bash
+docker run -it --rm --network none busybox
+```
+
+Si ahora lanzo un `ifconfig` dentro del contenedor, verás que no tiene ninguna interfaz de red.
+
+```bash
+ifconfig
+```
+
+Solo tiene la interfaz `lo` que es la interfaz de loopback.
+
+### Crea tus propias redes
+
+Cuando instalamos Docker viene de caja un servidor DNS pero solo funciona en las redes que creamos nosotros. Y para crear nuestras propias redes, podemos hacerlo con el siguiente comando:
+
+```bash
+docker network create returngis
+```
+
+A partir de este momento tenemos una nueva red para nuestros contenedores. He creado un nuevo Dockerfile llamado `Dockerfile.network-test`para las pruebas con esta red. Puedes generar la imagen utilizando este comando:
+
+```bash
+docker build -t ubuntu-with-net-tools -f Dockerfile.network-test .
+```
+
+Y ahora lo siguiente que vamos a hacer es crearnos dos contenedores que formen parte de la nueva red:
+
+```bash
+docker run --name donpepito --network returngis -it ubuntu-with-net-tools
+```
+
+Ahora haz un split del terminal para crear el segundo contenedor:
+
+```bash
+docker run --name donjose --network returngis -it ubuntu-with-net-tools
+```
+
+Y a partir de este momento puedes hacer ping de un contenedor a otro:
+
+```bash
+ping donjose
+```
+
+o desde el otro contenedor:
+
+```bash
+ping donpepito
+```
+
+Para entender mejor todos estos conceptos, te recomiendo que veas el vídeo de mi canal de Youtube [5. Cómo funciona el networking en Docker](https://youtu.be/n5Zw00mYRH4).
+
+
+¡Nos vemos 👋🏻!
 
 ## Limpiar recursos
     
