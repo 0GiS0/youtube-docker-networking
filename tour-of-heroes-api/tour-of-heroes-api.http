@@ -1,0 +1,36 @@
+@tour_of_heroes_api_HostAddress = http://localhost:5051
+
+POST {{tour_of_heroes_api_HostAddress}}/api/hero
+Content-Type: application/json
+
+{
+  "name": "Deadpool",
+  "alterEgo": "Wade Wilson",
+  "description": "A mercenary with a mouth."
+}
+
+###
+
+POST {{tour_of_heroes_api_HostAddress}}/api/hero
+Content-Type: application/json
+
+{
+  "name": "Wolverine",
+  "alterEgo": "Logan",
+  "description": "A mutant with retractable claws."
+}
+
+###
+
+POST {{tour_of_heroes_api_HostAddress}}/api/hero
+Content-Type: application/json
+
+{
+  "name": "Blake",
+  "alterEgo": "The Black Panther",
+  "description": "The king of Wakanda."
+}
+
+###
+
+GET {{tour_of_heroes_api_HostAddress}}/api/hero

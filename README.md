@@ -171,13 +171,50 @@ O desde el otro contenedor:
 ping 172.18.0.3
 ```
 
+## Cómo ejecutar la aplicación de ejemplo Tour Of Heroes
+
+Durante el vídeo te explico todos los cambios que he realizado en la API de Tour Of Heroes para que pueda comunicarse con la base de datos. El código de la misma esta en el directorio `tour-of-heroes-api`.
+
+Ahora para ejecutar la misma lo primero que necesitas es crear una red:
+
+```bash
+docker network create tour-of-heroes-vnet
+```
+
+Creamos la base de datos dentro de la red:
+
+```bash
+docker run --name db -e ACCEPT_EULA=Y -e SA_PASSWORD=Password123 -d -p 1433:1433 --network tour-of-heroes-vnet -d mcr.microsoft.com/azure-sql-edge
+```
+
+Ahora generamos la imagen de la API:
+
+```bash
+cd tour-of-heroes-api
+docker build -t tour-of-heroes-api:v1 .
+```
+
+Y una vez que finalice la misma, ejecutamos el contenedor:
+
+```bash
+docker run --name api --network tour-of-heroes-vnet -p 5051:5000 -d  tour-of-heroes-api:v1
+```
+
+En este caso la API si que está expuesto porque el frontal web necesita comunicarse con la misma.
+
+Si quieres probar el frontal web en Angular necesitas crear la imagen de la misma:
+
+```bash
+cd tour-of-heroes-angular
+docker build -t tour-of-heroes-web:v1 -f Dockerfile.gh-copilot .
+```
+
+Y y a para finalizar ejecutamos el contenedor:
+
+```bash
+docker run --name web --network tour-of-heroes-vnet -p 80:80 -d tour-of-heroes-web:v1
+```
+
 Para entender mejor todos estos conceptos, te recomiendo que veas el vídeo de mi canal de Youtube [5. Cómo funciona el networking en Docker](https://youtu.be/n5Zw00mYRH4).
 
-
 ¡Nos vemos 👋🏻!
-
-## Limpiar recursos
-    
-```bash
- ```
-

@@ -1,0 +1,24 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: heroes-web
+  description: Heroes Web is a web application that allows you to manage heroes
+  tags:
+    - angular
+    - typescript
+    - web
+    - ui
+  links:
+    - url: https://github.com/0GiS0/tour-of-heroes-angular
+      title: Source Code
+      icon: github
+    - url: https://tour-of-heroes.es
+      title: Production
+      icon: globe
+spec:
+  type: website
+  lifecycle: production
+  owner: user:0GiS0
+  system: tour-of-heroes
+  dependsOn: ['api:heroes-api']  
+
